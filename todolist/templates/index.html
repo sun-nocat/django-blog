@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<br>
+<h1>todolist</h1>
+<table border="1"px>
+    <tr>
+        <td>todo内容</td>
+        <td>是否完成</td>
+        <td>标签</td>
+        <td>时间</td>
+    </tr>
+
+    {% for i in all_todo %}
+
+    <tr>
+        <td>{{ i.todo }}</td>
+        <td>{{ i.flag }}</td>
+        <td>{{ i.tag }}</td>
+        <td>{{ i.creattime }}</td>
+
+    </tr>
+    {% endfor %}
+
+
+</table>
+
+<h2>
+    增加内容
+</h2>
+<form action="/api_add_todo/" method="post">
+    <p>todo    <input type="text" name="todo"></p>
+	<p>标签    <input type="text" name="tag"></p>
+    <p><input type="submit" value="submit"></p>
+</form>
+
+
+<h2>
+    删除内容
+</h2>
+<form action="/api_delete_todo/" method="post">
+    <p>todo    <input type="text" name="todo"></p>
+    <p><input type="submit" value="submit"></p>
+</form>
+    <p>Ajax 与 Django 的交互</p>
+    <button id="new" onclick="getHTTPObject()&getNewContent()">删除</button>
+
+<h2>
+    是否完成
+</h2>
+<form action="/api_tag_todo/" method="post">
+    <p>todo    <input type="text" name="todo"></p>
+	<p>是否完成    <input type="text" name="flag"></p>
+    <p><input type="submit" value="submit"></p>
+</form>
+
+<h2>
+    标签
+</h2>
+<form action="/api_tag_todo/" method="post">
+    <p>todo    <input type="text" name="todo"></p>
+	<p>标签    <input type="text" name="tag"></p>
+    <p><input type="submit" value="submit"></p>
+</form>
+
+<ul>
+  <li><a><span class="a">第一种文字</span><span class="b">第二种文字</span></a></li>
+</ul>
+
+</body>
+</html>

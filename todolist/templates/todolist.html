@@ -1,0 +1,243 @@
+ <!doctype html>
+ <html>
+ <head>
+ 	<meta charset="utf-8">
+ 	<title>to do list</title>
+ 	<style>
+ 	body{
+ 		margin:0px;
+ 		background-color:#FFEBCD;
+ 	}
+ 	.head{
+ 		width:100%;
+ 		height:60px;
+ 		background-color:#FFA500;
+ 	}
+ 	.add{
+ 		width:700px;
+ 		height:50px;
+ 		margin:auto;
+ 		position:relative;
+ 		padding:5px;
+ 	}
+ 	.add strong{
+ 		position:absolute;
+ 		top:12px;
+ 		font-size:26px;
+ 	}
+ 	.add input{
+ 		position:absolute;
+ 		top:10px;
+ 		left:270px;
+ 		width:350px;
+ 		height:35px;
+ 		border:0px;
+ 		padding:0px;
+ 		border-radius: 10px;
+ 		outline:none;
+ 	}
+ 	#in{
+ 		padding:0px 10px;
+ 	}
+ 	#sub{
+ 		top:12px;
+ 		left:650px;
+ 		width:50px;
+ 		height:30px;
+    background-color:#FFFFE0;
+ 	}
+ 	#sub:active{
+ 		background-color:#FFE4C4;
+ 		top:15px;
+ 	}
+ 	#node{
+ 		width:700px;
+ 		height:auto;
+ 		margin:auto;
+ 	}
+ 	.check{
+ 		width:20px;
+ 		height:20px;
+ 		margin:8px;
+ 	}
+ 	.nodes{
+ 		width:650px;
+ 		height:36px;
+ 		background-color:#FFFAFA;
+ 		margin:10px;
+ 		border-radius:5px;
+ 		position: relative;
+ 	}
+ 	.nodes span{
+ 		display:block;
+ 		width:550px;
+ 		height:26px;
+ 		position: absolute;
+ 		top:5px;
+ 		left:40px;
+ 		line-height: 1.5;
+ 		overflow:hidden;
+ 	}
+ 	.butt{
+ 		position:absolute;
+ 		left:610px;
+ 		top:8px;
+ 		width:20px;
+ 		height:20px;
+ 		padding:0px;
+    border:0px;
+    background:url(/static/img/delete.png);
+    background-size: 20px 20px;
+    outline:none;
+ 	}
+  .butt:active{
+    top:10px;
+  }
+ </style>
+ </head>
+ <body>
+ 	<div class="head">
+ 		<div class="add">
+ 			<strong>To Do List</strong>
+ 			<input type="text" name="value" id="in" onkeydown="onkeydo(event)">
+ 			<input type="button" value="添加" id="sub"></form>
+ 		</div>
+ 	</div>
+ 	<div id="node">
+ 	</div>
+ 	<script>
+    document.getElementById("sub").setAttribute("onclick","addtodo();");
+ 		var node=document.getElementById("node");
+ 		var invalue=document.getElementById("in");
+    function onkeydo(e){
+      var code = e.keyCode;
+      if(code==13)
+      addtodo();
+    }
+    
+    function requestaj(url,todo)
+      {
+        var xmlhttp;
+            if(window.XMLHttpRequest)
+                xmlhttp=new XMLHttpRequest();
+            else
+                xmlhttp=new ActiveXobject("microsoft.XMLHTTP");
+
+              xmlhttp.onreadystatechange=function()
+              {
+                if(xmlhttp.readyState==4 && xmlhttp.status==200)
+                  {
+                  }
+              }
+              console.log(typeof todo);
+            xmlhttp.open("POST",url,true);
+            xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+            xmlhttp.send("todo="+todo);
+
+      }
+
+ 		function todotext(newd,val){         
+			var newtext=document.createTextNode(val);
+ 			var pp=document.createElement("span");
+ 			pp.appendChild(newtext);
+ 			newd.appendChild(pp);
+ 		}
+
+ 		function newtodo(){
+ 			var newd=document.createElement("div");      
+ 			newd.className="nodes";
+
+ 			var check=document.createElement("input");      
+ 			check.type="checkbox";
+ 			check.className="check";
+ 			check.setAttribute("onclick","checktodo(this);");
+ 			newd.appendChild(check);
+
+ 			var buttons=document.createElement("button"); 
+ 			buttons.type="submit";
+ 			buttons.className="butt";
+ 			buttons.setAttribute("onclick","buttontodo(this);");
+ 			newd.appendChild(buttons);
+ 			return newd;
+ 	    }
+
+ 		function addtodo(){
+ 			if(invalue.value!="")
+ 			{   requestaj("/api_add_todo",invalue.value);
+ 				var newdiv=new newtodo();
+ 				todotext(newdiv,invalue.value);     //添加文本
+ 			    node.appendChild(newdiv);
+ 			    invalue.value="";
+ 			}
+ 			else
+ 				alert("请输入内容");
+ 		}
+
+ 		function checktodo(ch){
+ 			if(ch.checked ){
+ 				ch.parentNode.style.backgroundColor="#C0C0C0";	
+ 				ch.parentNode.getElementsByTagName("span")[0].style.textDecoration="line-through";
+        var data=ch.parentNode.getElementsByTagName("span")[0].innerHTML;
+ 				requestaj("/api_flag0_todo",data);
+ 			}
+ 			else{
+ 				ch.parentNode.style.backgroundColor="white";	
+ 				ch.parentNode.getElementsByTagName("span")[0].style.textDecoration="none";
+        var data=ch.parentNode.getElementsByTagName("span")[0].innerHTML;
+        requestaj("/api_flag1_todo",data);
+ 			}
+ 		}
+
+ 		function buttontodo(bu){
+ 			bu.parentNode.parentNode.removeChild(bu.parentNode);
+       var data=bu.parentNode.getElementsByTagName("span")[0].innerHTML;
+       requestaj("/api_delete_todo",data);
+ 		}
+
+    function checkto(ch){
+ 			if(ch.checked ){
+ 				ch.parentNode.style.backgroundColor="#C0C0C0";
+ 				ch.parentNode.getElementsByTagName("span")[0].style.textDecoration="line-through";
+ 			}
+ 			else{
+ 				ch.parentNode.style.backgroundColor="white";
+ 				ch.parentNode.getElementsByTagName("span")[0].style.textDecoration="none";
+ 			}
+ 		}
+ 		
+	window.onload=function()
+			{
+				var xmlhttp;
+        if(window.XMLHttpRequest)
+          	xmlhttp=new XMLHttpRequest();
+        else
+          	xmlhttp=new ActiveXobject("microsoft.XMLHTTP");
+        xmlhttp.onreadystatechange=function()
+        {
+          if(xmlhttp.readyState==4 && xmlhttp.status==200)
+          	{
+          		var text=JSON.parse(xmlhttp.responseText);
+          		for(var i=0;i<text.length;i++)
+                 {
+                    if(text[i].fields.todo!="")
+                      {
+                        var newdivs=new newtodo();
+                        if(text[i].fields.flag==0)
+                          {
+                            newdivs.getElementsByClassName("check")[0].checked="true";
+                          }
+                          todotext(newdivs,text[i].fields.todo);
+                          node.appendChild(newdivs);
+                          checkto(newdivs.getElementsByClassName("check")[0]);
+                      }
+                    else
+                    alert("请输入内容");
+                  }
+            }
+        }
+        xmlhttp.open("POST","/api_all_todo",true);
+        xmlhttp.send();
+      }
+ 	</script>
+ </body>
+ </html>
